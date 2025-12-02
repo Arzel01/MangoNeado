@@ -4,6 +4,7 @@
 # 
 # Uso:
 #   make          - Compila todos los programas
+#   make demo     - EJECUTA TODO (compilar + simulación + análisis + gráficas)
 #   make clean    - Elimina archivos compilados
 #   make run      - Ejecuta el simulador con parámetros por defecto
 #   make analysis - Ejecuta el análisis completo
@@ -157,6 +158,57 @@ analysis: $(SIMULATOR_BIN)
 	@echo "╚══════════════════════════════════════════════════════════════╝"
 
 # ============================================================================
+# Demo completa (compilar + simulación visual + análisis + gráficas)
+# ============================================================================
+
+demo: all
+	@echo ""
+	@echo "╔══════════════════════════════════════════════════════════════╗"
+	@echo "║           DEMO COMPLETA - Sistema Mangosa S.A.               ║"
+	@echo "╚══════════════════════════════════════════════════════════════╝"
+	@echo ""
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "  PARTE 1: Simulación en tiempo real ($(BOXES) cajas)"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo ""
+	@echo "Parámetros de simulación:"
+	@echo "  • Velocidad banda:    $(X) cm/s"
+	@echo "  • Tamaño caja:        $(Z) cm"
+	@echo "  • Longitud banda:     $(W) cm"
+	@echo "  • Mangos mínimos:     $(N) por caja"
+	@echo "  • Robots activos:     $(ROBOTS)"
+	@echo "  • Robots de respaldo: $(BACKUP)"
+	@echo ""
+	@$(SIMULATOR_BIN) -x $(X) -z $(Z) -w $(W) -n $(N) -r $(ROBOTS) -b $(BACKUP) -c $(BOXES) -v
+	@echo ""
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "  PARTE 2: Análisis de número óptimo de robots"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo ""
+	@$(SIMULATOR_BIN) -x $(X) -z $(Z) -w $(W) -n $(N) -a
+	@echo ""
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "  PARTE 3: Generación de gráficas"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo ""
+	@python3 $(SCRIPTS_DIR)/plot_analysis.py
+	@echo ""
+	@echo "╔══════════════════════════════════════════════════════════════╗"
+	@echo "║                    DEMO COMPLETADA                           ║"
+	@echo "╠══════════════════════════════════════════════════════════════╣"
+	@echo "║  Resultados:                                                 ║"
+	@echo "║    • Simulación ejecutada exitosamente                       ║"
+	@echo "║    • Análisis de robots completado                           ║"
+	@echo "║    • Gráficas generadas en: scripts/                         ║"
+	@echo "║                                                              ║"
+	@echo "║  Archivos PNG generados:                                     ║"
+	@echo "║    - scripts/cost_effectiveness_analysis.png                 ║"
+	@echo "║    - scripts/efficiency_curve.png                            ║"
+	@echo "║    - scripts/missed_mangos.png                               ║"
+	@echo "║    - scripts/combined_analysis.png                           ║"
+	@echo "╚══════════════════════════════════════════════════════════════╝"
+
+# ============================================================================
 # Pruebas
 # ============================================================================
 
@@ -222,6 +274,7 @@ help:
 	@echo "║  Comandos disponibles:                                       ║"
 	@echo "║                                                              ║"
 	@echo "║  make          - Compila todos los programas                 ║"
+	@echo "║  make demo     - ⭐ DEMO COMPLETA (compila+simula+gráficas)  ║"
 	@echo "║  make clean    - Elimina archivos compilados                 ║"
 	@echo "║  make run      - Ejecuta simulación con parámetros default   ║"
 	@echo "║  make test     - Ejecuta pruebas básicas                     ║"
@@ -241,6 +294,7 @@ help:
 	@echo "╠══════════════════════════════════════════════════════════════╣"
 	@echo "║  Ejemplos:                                                   ║"
 	@echo "║                                                              ║"
+	@echo "║  make demo                    <- Ejecutar TODO automático    ║"
 	@echo "║  make run X=15 Z=40 N=12 ROBOTS=6                            ║"
 	@echo "║  make analysis X=10 Z=50 N=15                                ║"
 	@echo "╚══════════════════════════════════════════════════════════════╝"

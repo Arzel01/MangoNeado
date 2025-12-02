@@ -1,17 +1,18 @@
 # Sistema de Etiquetado Automático de Mangos - Mangosa S.A.
 
-## Ejecución Rápida (Un Solo Comando)
+## 🚀 Ejecución Rápida (Un Solo Comando)
 
-Para compilar, ejecutar el análisis completo y generar todas las gráficas:
+Para compilar, ejecutar una simulación visual, análisis completo y generar todas las gráficas:
 
 ```bash
-make && make analysis
+make demo
 ```
 
 **Esto automáticamente:**
-1. Compila todo el proyecto
-2. Ejecuta el análisis de eficiencia (1 a N robots)
-3. Genera 4 gráficas PNG en la carpeta `scripts/`
+1. ✅ Compila todo el proyecto
+2. ✅ Ejecuta una simulación visual con robots etiquetando mangos
+3. ✅ Ejecuta el análisis de eficiencia (1 a N robots)
+4. ✅ Genera 4 gráficas PNG en la carpeta `scripts/`
 
 **Gráficas generadas:**
 - `scripts/cost_effectiveness_analysis.png` - Análisis principal costo-efectivo
@@ -19,9 +20,17 @@ make && make analysis
 - `scripts/missed_mangos.png` - Mangos perdidos por configuración  
 - `scripts/combined_analysis.png` - Análisis combinado (4 gráficas)
 
+### Otros comandos útiles:
+```bash
+make              # Solo compilar
+make analysis     # Solo análisis + gráficas (sin simulación visual)
+make run          # Solo ejecutar simulación
+make help         # Ver todos los comandos disponibles
+```
+
 ### Personalizar parámetros:
 ```bash
-make && make analysis X=15 N=25
+make demo X=15 N=25 BOXES=30
 ```
 
 | Parámetro | Descripción | Default |
@@ -30,6 +39,24 @@ make && make analysis X=15 N=25
 | `Z` | Tamaño caja (cm) | 50 |
 | `W` | Longitud banda (cm) | 300 |
 | `N` | Mangos mínimos/caja | 10 |
+| `ROBOTS` | Número de robots | 4 |
+| `BOXES` | Cajas a simular | 20 |
+
+### Ejemplos de uso con parámetros personalizados:
+
+```bash
+# Escenario 1: Banda más rápida con más mangos por caja
+make demo X=15 N=25
+
+# Escenario 2: Cajas más grandes con más mangos
+make demo Z=80 N=30
+
+# Escenario 3: Banda más larga, simulación extendida
+make demo W=500 BOXES=50
+
+# Escenario 4: Configuración completa personalizada
+make demo X=12 Z=60 W=400 N=20 ROBOTS=6 BOXES=40
+```
 
 ---
 

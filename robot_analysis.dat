@@ -1,6 +1,6 @@
 # Análisis de número de robots vs eficiencia
 # X=10.00 cm/s, Z=50.00 cm, W=300.00 cm, N=10-12, Cajas=20
 # Columnas: num_robots avg_efficiency min_efficiency max_efficiency avg_missed
-1 36.30 35.71 37.04 7.02
-2 72.93 72.40 73.73 2.97
+1 35.97 35.71 36.36 7.12
+2 72.04 70.48 74.07 3.11
 3 100.00 100.00 100.00 0.00
