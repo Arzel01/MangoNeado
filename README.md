@@ -1,6 +1,6 @@
 # Sistema de Etiquetado Automático de Mangos - Mangosa S.A.
 
-## 🚀 Ejecución Rápida (Un Solo Comando)
+## Ejecución Rápida (Un Solo Comando)
 
 Para compilar, ejecutar una simulación visual, análisis completo y generar todas las gráficas:
 
@@ -9,10 +9,10 @@ make demo
 ```
 
 **Esto automáticamente:**
-1. ✅ Compila todo el proyecto
-2. ✅ Ejecuta una simulación visual con robots etiquetando mangos
-3. ✅ Ejecuta el análisis de eficiencia (1 a N robots)
-4. ✅ Genera 4 gráficas PNG en la carpeta `scripts/`
+1. Compila todo el proyecto
+2. Ejecuta una simulación visual con robots etiquetando mangos
+3. Ejecuta el análisis de eficiencia (1 a N robots)
+4. Genera 4 gráficas PNG en la carpeta `scripts/`
 
 **Gráficas generadas:**
 - `scripts/cost_effectiveness_analysis.png` - Análisis principal costo-efectivo
