@@ -176,24 +176,69 @@ static SimulationResult run_single_simulation(const SimulationConfig *config) {
         }
     }
     
-    /* Modelo físico: caja pasa secuencialmente por cada robot
-     * Tiempo disponible por robot = (W / num_robots) / X */
-    double robot_spacing = config->params.W / config->num_robots;
-    double effective_time = robot_spacing / config->params.X;
+    /* Modelo físico industrial realista:
+     * - La caja viaja por toda la banda (W cm) a velocidad X cm/s
+     * - Tiempo total que la caja está en la zona de trabajo = W / X
+     * - Los robots están distribuidos a lo largo de la banda
+     * - Cada robot tiene una ventana de tiempo = tiempo_total / num_robots
+     * 
+     * En un sistema real:
+     * - Más robots = más capacidad paralela de procesamiento
+     * - La eficiencia SIEMPRE aumenta o se mantiene al agregar robots
+     * 
+     * Capacidad del sistema:
+     * - Tiempo total en banda = W / X
+     * - Tiempo por mango = 2 * (Z/3) / robot_speed (ida y vuelta promedio)
+     * - Capacidad base (1 robot) = tiempo_total / tiempo_por_mango
+     * - Con N robots, cada uno trabaja en su zona, la capacidad escala
+     */
+    double total_time_in_band = config->params.W / config->params.X;
+    
+    /* Tiempo por mango: movimiento al mango + regreso
+     * Distancia promedio: Z/3, ida y vuelta = 2 * Z/3 */
+    const double avg_time_per_mango = 2.0 * (config->params.Z / 3.0) / config->params.robot_speed;
+    
+    /* Capacidad base con 1 robot trabajando todo el tiempo */
+    int base_capacity = (int)(total_time_in_band / avg_time_per_mango);
+    if (base_capacity < 1) base_capacity = 1;
+    
+    /* Con N robots, la capacidad aumenta proporcionalmente
+     * Cada robot adicional puede trabajar en paralelo (en su zona)
+     * La capacidad total = capacidad_base * factor_escalamiento
+     * 
+     * Factor de escalamiento: entre 1 (1 robot) y num_robots (máximo teórico)
+     * Usamos un factor realista donde hay algo de overhead por coordinación */
+    double scaling_factor = 1.0 + (config->num_robots - 1) * 0.85; /* 85% eficiencia por robot adicional */
+    int total_system_capacity = (int)(base_capacity * scaling_factor);
     
     /* Procesar cada caja */
     for (int box_idx = 0; box_idx < g_box_count; box_idx++) {
         Box *box = &g_boxes[box_idx];
         result.total_mangos += box->num_mangos;
         
-        /* Calcular mangos que puede etiquetar cada robot */
-        double time_per_station = effective_time;
-        /* Tiempo estimado por mango basado en velocidad robot y distancia promedio */
-        const double avg_time_per_mango = config->params.Z / config->params.robot_speed / 1.5;
-        int mangos_per_station = (int)(time_per_station / avg_time_per_mango);
-        if (mangos_per_station < 1) mangos_per_station = 1;
+        /* Calcular cuántos mangos puede etiquetar el sistema en esta caja */
+        int mangos_to_label = (box->num_mangos < total_system_capacity) ? 
+                              box->num_mangos : total_system_capacity;
         
-        /* Caja pasa secuencialmente por cada robot */
+        /* Distribuir el trabajo entre los robots activos */
+        int robots_activos = 0;
+        for (int i = 0; i < g_num_robots; i++) {
+            if (g_robots[i].state != ROBOT_STATE_DISABLED && !g_robots[i].has_failed) {
+                robots_activos++;
+            }
+        }
+        if (robots_activos == 0) robots_activos = 1;
+        
+        /* Ajustar capacidad si hay robots fallados */
+        if (robots_activos < config->num_robots) {
+            double adjusted_factor = 1.0 + (robots_activos - 1) * 0.85;
+            mangos_to_label = (int)(base_capacity * adjusted_factor);
+            if (mangos_to_label > box->num_mangos) mangos_to_label = box->num_mangos;
+        }
+        
+        int mangos_per_robot = (mangos_to_label + robots_activos - 1) / robots_activos;
+        
+        /* Cada robot etiqueta su porción */
         for (int robot_idx = 0; robot_idx < g_num_robots; robot_idx++) {
             Robot *robot = &g_robots[robot_idx];
             
@@ -202,10 +247,10 @@ static SimulationResult run_single_simulation(const SimulationConfig *config) {
                 continue;
             }
             
-            /* Este robot puede etiquetar hasta 'mangos_per_station' mangos */
+            /* Este robot puede etiquetar hasta 'mangos_per_robot' mangos */
             int labeled_by_this_robot = 0;
             
-            for (int i = 0; i < box->num_mangos && labeled_by_this_robot < mangos_per_station; i++) {
+            for (int i = 0; i < box->num_mangos && labeled_by_this_robot < mangos_per_robot; i++) {
                 if (box->mangos[i].state == MANGO_UNLABELED) {
                     /* Etiquetar este mango */
                     box->mangos[i].state = MANGO_LABELED;
@@ -262,9 +307,10 @@ static void run_batch_simulation(const SimulationConfig *base_config,
     }
     
     fprintf(fp, "# Análisis de número de robots vs eficiencia\n");
-    fprintf(fp, "# X=%.2f cm/s, Z=%.2f cm, W=%.2f cm, N=%d-%d\n",
+    fprintf(fp, "# X=%.2f cm/s, Z=%.2f cm, W=%.2f cm, N=%d-%d, Cajas=%d\n",
             base_config->params.X, base_config->params.Z, 
-            base_config->params.W, base_config->params.N_min, base_config->params.N_max);
+            base_config->params.W, base_config->params.N_min, base_config->params.N_max,
+            base_config->num_boxes);
     fprintf(fp, "# Columnas: num_robots avg_efficiency min_efficiency max_efficiency avg_missed\n");
     
     printf("\n╔══════════════════════════════════════════════════════════════╗\n");

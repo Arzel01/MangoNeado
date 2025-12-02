@@ -141,9 +141,20 @@ run-full: $(VISION_BIN) $(ROBOT_BIN)
 # Análisis
 # ============================================================================
 
-analysis: $(ANALYSIS_BIN)
-	@echo "Ejecutando análisis completo..."
-	@$(ANALYSIS_BIN) -x $(X) -z $(Z) -w $(W) -n $(N)
+analysis: $(SIMULATOR_BIN)
+	@echo ""
+	@echo "╔══════════════════════════════════════════════════════════════╗"
+	@echo "║  Ejecutando análisis completo + generación de gráficas       ║"
+	@echo "╚══════════════════════════════════════════════════════════════╝"
+	@echo ""
+	@$(SIMULATOR_BIN) -x $(X) -z $(Z) -w $(W) -n $(N) -a
+	@echo ""
+	@echo "Generando gráficas..."
+	@python3 $(SCRIPTS_DIR)/plot_analysis.py
+	@echo ""
+	@echo "╔══════════════════════════════════════════════════════════════╗"
+	@echo "║  Gráficas generadas en: scripts/                             ║"
+	@echo "╚══════════════════════════════════════════════════════════════╝"
 
 # ============================================================================
 # Pruebas

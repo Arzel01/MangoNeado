@@ -1,5 +1,38 @@
 # Sistema de Etiquetado Automático de Mangos - Mangosa S.A.
 
+## 🚀 Ejecución Rápida (Un Solo Comando)
+
+Para compilar, ejecutar el análisis completo y generar todas las gráficas:
+
+```bash
+make && make analysis
+```
+
+**Esto automáticamente:**
+1. ✅ Compila todo el proyecto
+2. ✅ Ejecuta el análisis de eficiencia (1 a N robots)
+3. ✅ Genera 4 gráficas PNG en la carpeta `scripts/`
+
+**Gráficas generadas:**
+- `scripts/cost_effectiveness_analysis.png` - Análisis principal costo-efectivo
+- `scripts/efficiency_curve.png` - Curva de eficiencia vs robots
+- `scripts/missed_mangos.png` - Mangos perdidos por configuración  
+- `scripts/combined_analysis.png` - Análisis combinado (4 gráficas)
+
+### Personalizar parámetros:
+```bash
+make && make analysis X=15 N=25
+```
+
+| Parámetro | Descripción | Default |
+|-----------|-------------|---------|
+| `X` | Velocidad banda (cm/s) | 10 |
+| `Z` | Tamaño caja (cm) | 50 |
+| `W` | Longitud banda (cm) | 300 |
+| `N` | Mangos mínimos/caja | 10 |
+
+---
+
 ## Descripción
 
 Sistema de simulación para automatización de etiquetado de mangos en línea de producción industrial.
@@ -93,6 +126,21 @@ make
 ```bash
 ./bin/simulator -x 10 -z 50 -w 300 -n 10 -c 20 -a
 ```
+
+### 8. Generar Análisis con Gráficas
+**Ejecuta análisis completo y genera gráficas** en un solo comando:
+```bash
+make analysis
+```
+También puedes personalizar los parámetros:
+```bash
+make analysis X=50 Z=50 W=300 N=20
+```
+**Imágenes generadas en `scripts/`:**
+- `cost_effectiveness_analysis.png` - Análisis principal costo-efectivo
+- `efficiency_curve.png` - Curva de eficiencia vs robots
+- `missed_mangos.png` - Mangos perdidos por configuración
+- `combined_analysis.png` - Análisis combinado
 
 ## Limpieza
 
