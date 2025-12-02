@@ -1,6 +1,6 @@
 # Sistema de Etiquetado Automático de Mangos - Mangosa S.A.
 
-## 🚀 Ejecución Rápida (Un Solo Comando)
+## Ejecución Rápida (Un Solo Comando)
 
 Para compilar, ejecutar el análisis completo y generar todas las gráficas:
 
@@ -9,9 +9,9 @@ make && make analysis
 ```
 
 **Esto automáticamente:**
-1. ✅ Compila todo el proyecto
-2. ✅ Ejecuta el análisis de eficiencia (1 a N robots)
-3. ✅ Genera 4 gráficas PNG en la carpeta `scripts/`
+1. Compila todo el proyecto
+2. Ejecuta el análisis de eficiencia (1 a N robots)
+3. Genera 4 gráficas PNG en la carpeta `scripts/`
 
 **Gráficas generadas:**
 - `scripts/cost_effectiveness_analysis.png` - Análisis principal costo-efectivo
